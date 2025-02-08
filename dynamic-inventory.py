@@ -11,10 +11,7 @@ folder_id = os.environ['YC_FOLDER_ID']
 
 
 def get_hosts(data_json):
-    host_groups = dict()
-
-    host_groups['k3s_cluster'] = {}
-    host_groups['k3s_cluster']['children'] = {}
+    host_groups = {'k3s_cluster': {'children': ['server', 'agent']}}
 
     if data_json == {}:
         return {}
@@ -23,9 +20,9 @@ def get_hosts(data_json):
         group = instance['labels'][group_label]
         address = instance['networkInterfaces'][0]['primaryV4Address']['oneToOneNat']['address']
 
-        if group not in host_groups['k3s_cluster']['children']:
-            host_groups['k3s_cluster']['children'][group] = {'hosts': [], 'vars': {}, 'children': []}
-        host_groups['k3s_cluster']['children'][group]['hosts'].append(address)
+        if group not in host_groups:
+            host_groups[group] = {'hosts': [], 'vars': {}, 'children': []}
+        host_groups[group]['hosts'].append(address)
     return j.dumps(host_groups, indent=2)
 
 
