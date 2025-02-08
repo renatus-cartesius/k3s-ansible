@@ -11,11 +11,19 @@
 - name: Setup K3S server
   hosts: server
   become: true
+  vars:
+    ansible_user: renatus
+    k3s_version: v1.30.2+k3s1
+    api_endpoint: "{{ hostvars[groups['server'][0]]['ansible_local_ip'] | default(groups['server'][0]) }}"
   roles:
     - role: k3s_server
 
 - name: Setup K3S agent
   hosts: agent
   become: true
+  vars:
+    ansible_user: renatus
+    k3s_version: v1.30.2+k3s1
+    api_endpoint: "{{ hostvars[groups['server'][0]]['ansible_local_ip'] | default(groups['server'][0]) }}"
   roles:
     - role: k3s_agent
